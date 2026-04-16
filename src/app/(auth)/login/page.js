@@ -38,7 +38,7 @@ export default function LoginPage() {
         <div style={{ width: 32, height: 32, borderRadius: '50%', backgroundColor: '#0F3460', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <span style={{ color: '#14A085', fontSize: 16 }}>★</span>
         </div>
-        <span style={{ color: 'white', fontWeight: 700, fontSize: 18, letterSpacing: '-0.3px' }}>MedicDesk</span>
+        <span style={{ color: 'white', fontWeight: 600, fontSize: 18, letterSpacing: '-0.3px' }}>MedicDesk</span>
       </div>
 
       {/* Centred card */}
