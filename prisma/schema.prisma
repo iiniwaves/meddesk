@@ -24,3 +24,19 @@ enum Role {
   PHARMACIST
   NURSE
 }
+
+model Patient {
+  id          String   @id @default(cuid())
+  patientNo   String   @unique
+  firstName   String
+  lastName    String
+  dateOfBirth DateTime
+  gender      String
+  phone       String
+  address     String?
+  bloodGroup  String?
+  allergies   String[]
+  hmo         String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
