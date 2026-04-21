@@ -193,12 +193,15 @@ export default function PatientProfilePage() {
               <span style={{ fontSize: 13, color: '#475569' }}>{patient.phone}</span>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <span style={{ fontSize: 13, color: '#475569' }}>Allergies:</span>
-                {patient.allergies.length > 0 ? patient.allergies.map((a, i) => (
-                  <span key={i} style={{ padding: '3px 12px', borderRadius: 999, backgroundColor: i === 0 ? '#EF4444' : '#F59E0B', color: 'white', fontSize: 12, fontWeight: 500 }}>{a}</span>
-                )) : <span style={{ fontSize: 13, color: '#94A3B8' }}>None</span>}
-              </div>
+             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+  <span style={{ fontSize: 13, color: '#475569' }}>Allergies:</span>
+  {(patient.allergies || []).length > 0
+    ? (patient.allergies || []).map((a, i) => (
+        <span key={i} style={{ padding: '3px 12px', borderRadius: 999, backgroundColor: i === 0 ? '#EF4444' : '#F59E0B', color: 'white', fontSize: 12, fontWeight: 500 }}>{a}</span>
+      ))
+    : <span style={{ fontSize: 13, color: '#94A3B8' }}>None</span>
+  }
+</div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                 <button style={{ padding: '10px 20px', backgroundColor: '#0D7377', color: 'white', border: 'none', borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: 'pointer' }}>New Appointment</button>
                 <button style={{ padding: '10px 20px', backgroundColor: 'white', color: '#1E293B', border: '1px solid #E2E8F0', borderRadius: 8, fontSize: 13, fontWeight: 500, cursor: 'pointer' }}>New Consultation</button>
