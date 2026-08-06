@@ -25,7 +25,7 @@ export default function TopBar({ title, greeting, onBack }) {
     : title
 
   return (
-    <div style={{ height: 64, backgroundColor: 'white', borderBottom: '1px solid #E2E8F0', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 28px', position: 'sticky', top: 0, zIndex: 10 }}>
+    <div style={{ height: 64, backgroundColor: 'white', borderBottom: '1px solid #E2E8F0', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 28px' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
         {onBack && (
           <span onClick={onBack} style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}>

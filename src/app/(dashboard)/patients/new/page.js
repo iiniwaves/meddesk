@@ -3,9 +3,11 @@
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import TopBar from '@/components/TopBar'
+import { useSession } from 'next-auth/react'
 
 export default function NewPatientPage() {
   const router = useRouter()
+  const { data: session } = useSession()
   const [formData, setFormData] = useState({
     patientName: '',
     doctor: 'Dr Danladi',
@@ -23,6 +25,12 @@ export default function NewPatientPage() {
     '07:00AM', '08:00AM', '09:00AM', '10:00AM', '11:00AM',
     '12:00PM', '01:00PM', '02:00PM', '03:00PM', '04:00PM', '05:00PM',
   ]
+
+  // Map display doctor names to DB IDs
+  const doctorMap = {
+    'Dr Danladi': 'dr.danladi@medicdesk.com',
+    'Dr. Chidi': 'dr.chidi@medicdesk.com',
+  }
 
   function getField(label) {
     return (
@@ -49,28 +57,65 @@ export default function NewPatientPage() {
 
   async function handleSubmit(e) {
     e.preventDefault()
+    if (!formData.patientName.trim()) {
+      setError('Please enter a patient name.')
+      return
+    }
+    if (!formData.scheduleDate) {
+      setError('Please select a schedule date.')
+      return
+    }
+
     setLoading(true)
     setError('')
 
     try {
-      const patientData = {
-        patientNo: 'PAT-' + Math.floor(1000 + Math.random() * 9000),
-        firstName: formData.patientName.split(' ')[0] || formData.patientName,
-        lastName: formData.patientName.split(' ').slice(1).join(' ') || '',
-        gender: '',
-        phone: '',
-        allergies: [],
-      }
+      // Split name into first + last
+      const parts = formData.patientName.trim().split(' ')
+      const firstName = parts[0]
+      const lastName = parts.slice(1).join(' ') || ''
 
-      await fetch('/api/patients', {
+      // Create patient
+      const patientRes = await fetch('/api/patients', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(patientData),
+        body: JSON.stringify({
+          patientNo: 'PAT-' + Math.floor(1000 + Math.random() * 9000),
+          firstName,
+          lastName,
+          gender: '',
+          phone: '',
+          allergies: [],
+        }),
       })
 
-      // Create appointment linked to the new patient
-      // We need the patient ID, but the API doesn't return it directly
-      // So we'll just redirect for now — the full flow will link them
+      if (!patientRes.ok) throw new Error('Failed to create patient')
+
+      const createdPatient = await patientRes.json()
+
+      // Format time for DB (convert "08:00AM" to "08:00")
+      const formatTime = (t) => t.replace(/AM|PM/g, '').trim()
+      const isPM = formData.time.toUpperCase().includes('PM')
+      let [hours, rest] = formatTime(formData.time).split(':').map(Number)
+      if (isPM && hours !== 12) hours += 12
+      if (!isPM && hours === 12) hours = 0
+      const dbTime = `${String(hours).padStart(2, '0')}:${String(rest).padStart(2, '0')}`
+
+      // Schedule an appointment
+      await fetch('/api/appointments', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          patientId: createdPatient.id,
+          doctorEmail: doctorMap[formData.doctor],
+          date: formData.scheduleDate,
+          time: dbTime,
+          status: 'PENDING',
+          notes: formData.reason || null,
+        }),
+      })
+
+      router.push('/patients')
     } catch (err) {
       setError('Failed to save patient. Please try again.')
     } finally {
@@ -80,14 +125,7 @@ export default function NewPatientPage() {
 
   return (
     <>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-        <span onClick={() => router.back()} style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#475569" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <polyline points="15 18 9 12 15 6" />
-          </svg>
-        </span>
-        <TopBar title="Patients" />
-      </div>
+      <TopBar title="Patients" onBack={() => router.back()} />
 
       <div style={{ padding: '32px 40px', flex: 1 }}>
 
@@ -99,14 +137,8 @@ export default function NewPatientPage() {
             {/* Patient Name */}
             <div style={{ marginBottom: 24 }}>
               {getField('Patient Name')}
-              <div style={{ position: 'relative' }}>
-                <input type="text" placeholder="Search" style={inputStyle(true)} value={formData.patientName}
-                  onChange={e => setFormData({ ...formData, patientName: e.target.value })} />
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth="2"
-                  strokeLinecap="round" strokeLinejoin="round" style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)' }}>
-                  <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
-                </svg>
-              </div>
+              <input type="text" placeholder="type name here" style={inputStyle(false)} value={formData.patientName}
+                onChange={e => setFormData({ ...formData, patientName: e.target.value })} />
             </div>
 
             {/* Doctor */}
@@ -123,7 +155,8 @@ export default function NewPatientPage() {
             <div style={{ display: 'flex', gap: 20, marginBottom: 24 }}>
               <div style={{ flex: 1 }}>
                 {getField('Schedule Date')}
-                <input type="date" style={inputStyle(true)}
+                <input type="date" style={inputStyle()}
+                  value={formData.scheduleDate}
                   onChange={e => setFormData({ ...formData, scheduleDate: e.target.value })} />
               </div>
               <div style={{ flex: 1 }}>
