@@ -51,8 +51,8 @@ async function main() {
   console.log('✅ Patients seeded')
 
   // Appointments
-  const today = new Date()
-  today.setHours(0, 0, 0, 0)
+  const now = new Date()
+  const today = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()))
 
   const appointmentsData = [
     { patientNo: 'PAT-3290', time: '09:15 AM', status: 'DONE', doctorId: doctor2.id },
