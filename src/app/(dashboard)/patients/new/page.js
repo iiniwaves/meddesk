@@ -89,7 +89,10 @@ export default function NewPatientPage() {
         }),
       })
 
-      if (!patientRes.ok) throw new Error('Failed to create patient')
+      if (!patientRes.ok) {
+        const errBody = await patientRes.json()
+        throw new Error(errBody.error || `HTTP ${patientRes.status}`)
+      }
 
       const createdPatient = await patientRes.json()
 
@@ -102,7 +105,7 @@ export default function NewPatientPage() {
       const dbTime = `${String(hours).padStart(2, '0')}:${String(rest).padStart(2, '0')}`
 
       // Schedule an appointment
-      await fetch('/api/appointments', {
+      const apptRes = await fetch('/api/appointments', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -115,9 +118,15 @@ export default function NewPatientPage() {
         }),
       })
 
+      if (!apptRes.ok) {
+        const errBody = await apptRes.json()
+        console.error('Appointment creation failed:', errBody.error)
+        // Still redirect — patient was created successfully
+      }
+
       router.push('/patients')
     } catch (err) {
-      setError('Failed to save patient. Please try again.')
+      setError(err.message || 'Failed to save patient. Please try again.')
     } finally {
       setLoading(false)
     }

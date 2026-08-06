@@ -38,22 +38,27 @@ export async function GET(request) {
 }
 
 export async function POST(request) {
-  const body = await request.json()
+  try {
+    const body = await request.json()
 
-  const patient = await prisma.patient.create({
-    data: {
-      patientNo: body.patientNo,
-      firstName: body.firstName,
-      lastName: body.lastName,
-      dateOfBirth: new Date(body.dateOfBirth),
-      gender: body.gender,
-      phone: body.phone,
-      address: body.address || null,
-      bloodGroup: body.bloodGroup || null,
-      allergies: body.allergies || [],
-      hmo: body.hmo || null,
-    },
-  })
+    const patient = await prisma.patient.create({
+      data: {
+        patientNo: body.patientNo,
+        firstName: body.firstName,
+        lastName: body.lastName || '',
+        dateOfBirth: body.dateOfBirth ? new Date(body.dateOfBirth) : new Date('2000-01-01'),
+        gender: body.gender || 'Unknown',
+        phone: body.phone || '',
+        address: body.address || null,
+        bloodGroup: body.bloodGroup || null,
+        allergies: body.allergies || [],
+        hmo: body.hmo || null,
+      },
+    })
 
-  return Response.json(patient, { status: 201 })
+    return Response.json(patient, { status: 201 })
+  } catch (error) {
+    console.error('POST /api/patients error:', error.message, error.stack)
+    return Response.json({ error: error.message }, { status: 500 })
+  }
 }
