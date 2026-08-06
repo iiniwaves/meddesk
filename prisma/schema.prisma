@@ -8,13 +8,15 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(cuid())
-  name      String
-  email     String   @unique
-  password  String
-  role      Role     @default(DOCTOR)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id            String         @id @default(cuid())
+  name          String
+  email         String         @unique
+  password      String
+  role          Role           @default(DOCTOR)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  appointments  Appointment[]
+  consultations  Consultation[]
 }
 
 enum Role {
@@ -26,17 +28,79 @@ enum Role {
 }
 
 model Patient {
+  id            String          @id @default(cuid())
+  patientNo     String          @unique
+  firstName     String
+  lastName      String
+  dateOfBirth   DateTime
+  gender        String
+  phone         String
+  address       String?
+  bloodGroup    String?
+  allergies     String[]
+  hmo           String?
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  appointments  Appointment[]
+  visits        Visit[]
+  consultations Consultation[]
+}
+
+model Appointment {
+  id          String      @id @default(cuid())
+  patientId   String
+  doctorId    String
+  date        DateTime
+  time        String
+  status      ApptStatus  @default(PENDING)
+  notes       String?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  patient     Patient     @relation(fields: [patientId], references: [id])
+  doctor      User        @relation(fields: [doctorId], references: [id])
+}
+
+enum ApptStatus {
+  PENDING
+  CONFIRMED
+  DONE
+  CANCELLED
+}
+
+model Visit {
   id          String   @id @default(cuid())
-  patientNo   String   @unique
-  firstName   String
-  lastName    String
-  dateOfBirth DateTime
-  gender      String
-  phone       String
-  address     String?
-  bloodGroup  String?
-  allergies   String[]
-  hmo         String?
+  patientId   String
+  doctorName  String
+  complaint   String
+  diagnosis   String?
+  notes       String?
+  date        DateTime @default(now())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  patient     Patient  @relation(fields: [patientId], references: [id])
+}
+
+model Consultation {
+  id          String   @id @default(cuid())
+  patientId   String
+  doctorId    String
+  complaint   String
+  diagnosis   String?
+  prescription String?
+  notes       String?
+  date        DateTime @default(now())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  patient     Patient  @relation(fields: [patientId], references: [id])
+  doctor      User     @relation(fields: [doctorId], references: [id])
+}
+
+model Drug {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  quantity    Int      @default(0)
+  price       Float    @default(0)
+  category    String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
