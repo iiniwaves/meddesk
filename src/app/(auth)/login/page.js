@@ -41,13 +41,14 @@ export default function LoginPage() {
         <span style={{ color: 'white', fontWeight: 600, fontSize: 18, letterSpacing: '-0.3px' }}>MedicDesk</span>
       </div>
 
-      {/* Centred card */}
-      <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      {/* Centred card — padding gives breathing room on mobile */}
+      <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px 16px' }}>
         <div style={{
           backgroundColor: 'white',
           borderRadius: 12,
           padding: '40px 36px',
-          width: 400,
+          width: '100%',
+          maxWidth: 400,
           boxShadow: '0 4px 24px rgba(0,0,0,0.08)'
         }}>
           {/* Logo inside card */}

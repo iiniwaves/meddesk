@@ -49,7 +49,7 @@ function NavIcon({ name, active }) {
   }
 }
 
-export default function Sidebar() {
+export default function Sidebar({ isOpen, onClose }) {
   const pathname = usePathname()
 
   function isActive(href) {
@@ -57,11 +57,11 @@ export default function Sidebar() {
     return pathname.startsWith(href)
   }
 
-  function renderNav(items) {
+  function renderNav(items, onNavigate) {
     return items.map(item => {
       const active = isActive(item.href)
       return (
-        <Link key={item.label} href={item.href} style={{
+        <Link key={item.label} href={item.href} onClick={onNavigate} style={{
           display: 'flex', alignItems: 'center', gap: 14,
           padding: '12px 16px', marginBottom: 8,
           textDecoration: 'none', color: 'white',
@@ -77,8 +77,9 @@ export default function Sidebar() {
     })
   }
 
-  return (
-    <div style={{ width: 216, backgroundColor: '#0F3460', display: 'flex', flexDirection: 'column', position: 'fixed', top: 0, left: 0, height: '100vh', zIndex: 20 }}>
+  // Shared sidebar inner content (logo + navs + settings)
+  const sidebarInner = (onNavigate) => (
+    <>
       <div style={{ padding: '24px 20px 32px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <div style={{ width: 36, height: 36, borderRadius: '50%', backgroundColor: '#0D7377', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -88,13 +89,13 @@ export default function Sidebar() {
         </div>
       </div>
 
-      <nav style={{ padding: '0 16px' }}>{renderNav(navTop)}</nav>
+      <nav style={{ padding: '0 16px' }}>{renderNav(navTop, onNavigate)}</nav>
       <div style={{ flex: 1 }} />
-      <nav style={{ padding: '0 16px' }}>{renderNav(navBottom)}</nav>
+      <nav style={{ padding: '0 16px' }}>{renderNav(navBottom, onNavigate)}</nav>
       <div style={{ flex: 1 }} />
 
       <div style={{ padding: '0 16px 40px' }}>
-        <Link href="/settings" style={{
+        <Link href="/settings" onClick={onNavigate} style={{
           display: 'flex', alignItems: 'center', gap: 14,
           padding: '12px 16px', textDecoration: 'none',
           color: 'white', borderRadius: 10, fontSize: 14, opacity: 0.7,
@@ -103,6 +104,48 @@ export default function Sidebar() {
           Settings
         </Link>
       </div>
-    </div>
+    </>
+  )
+
+  return (
+    <>
+      {/* Desktop sidebar — fixed, always visible on md+ (hidden on mobile) */}
+      <div className="hidden md:flex" style={{ width: 216, backgroundColor: '#0F3460', flexDirection: 'column', position: 'fixed', top: 0, left: 0, height: '100vh', zIndex: 20 }}>
+        {sidebarInner()}
+      </div>
+
+      {/* Mobile drawer — slide-in from left, only on small screens */}
+      <div className="md:hidden">
+        {/* Backdrop */}
+        {isOpen && (
+          <div
+            onClick={onClose}
+            style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.4)', zIndex: 40 }}
+          />
+        )}
+        {/* Drawer panel */}
+        <div style={{
+          position: 'fixed', top: 0, left: 0, height: '100vh', zIndex: 50,
+          width: 260, maxWidth: '85vw',
+          backgroundColor: '#0F3460',
+          display: 'flex', flexDirection: 'column',
+          transform: isOpen ? 'translateX(0)' : 'translateX(-100%)',
+          transition: 'transform 0.25s ease-out',
+          overflowY: 'auto',
+        }}>
+          {/* Close button */}
+          <button
+            onClick={onClose}
+            aria-label="Close menu"
+            style={{ position: 'absolute', top: 16, right: 16, background: 'none', border: 'none', color: 'white', cursor: 'pointer', padding: 4, opacity: 0.7, zIndex: 1 }}
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+          </button>
+          {sidebarInner(onClose)}
+        </div>
+      </div>
+    </>
   )
 }

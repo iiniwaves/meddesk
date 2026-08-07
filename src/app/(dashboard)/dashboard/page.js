@@ -49,8 +49,8 @@ export default function DashboardPage() {
 
       <div style={{ padding: '24px 28px', flex: 1 }}>
 
-        {/* Stats */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16, marginBottom: 24 }}>
+        {/* Stats — 1 col mobile, 2 col tablet, 4 col desktop */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4" style={{ gap: 16, marginBottom: 24 }}>
           {stats.map(stat => (
             <div key={stat.label} style={{ backgroundColor: 'white', borderRadius: 12, padding: '20px 20px 16px', boxShadow: '0 1px 3px rgba(0,0,0,0.06)', border: '1px solid #F1F5F9' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10 }}>
@@ -75,8 +75,8 @@ export default function DashboardPage() {
           ))}
         </div>
 
-        {/* Middle row */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 24 }}>
+        {/* Middle row — stacks on mobile, 2 col on desktop */}
+        <div className="grid grid-cols-1 lg:grid-cols-2" style={{ gap: 16, marginBottom: 24 }}>
 
           {/* Appointments */}
           <div style={{ backgroundColor: 'white', borderRadius: 12, padding: '20px 24px', boxShadow: '0 1px 3px rgba(0,0,0,0.06)', border: '1px solid #F1F5F9' }}>
@@ -84,10 +84,10 @@ export default function DashboardPage() {
             <div>
               {data.appointments.map((apt, i) => (
                 <div key={i} style={{ display: 'flex', alignItems: 'center', padding: '12px 0', borderTop: i === 0 ? 'none' : '1px solid #F8FAFC' }}>
-                  <span style={{ flex: 1, fontSize: 14, color: '#1E293B', fontWeight: 400 }}>{apt.patient}</span>
-                  <span style={{ width: 80, fontSize: 13, color: '#64748B' }}>{apt.time}</span>
-                  <span style={{ width: 100, fontSize: 13, color: '#64748B' }}>{apt.doctor}</span>
-                  <span style={{ padding: '4px 14px', borderRadius: 999, fontSize: 12, fontWeight: 600, ...statusStyle[apt.status], minWidth: 70, textAlign: 'center' }}>
+                  <span style={{ flex: 1, fontSize: 14, color: '#1E293B', fontWeight: 400 }} className="truncate">{apt.patient}</span>
+                  <span style={{ width: 80, fontSize: 13, color: '#64748B' }} className="shrink-0">{apt.time}</span>
+                  <span style={{ width: 100, fontSize: 13, color: '#64748B' }} className="hidden md:inline shrink-0">{apt.doctor}</span>
+                  <span style={{ padding: '4px 14px', borderRadius: 999, fontSize: 12, fontWeight: 600, ...statusStyle[apt.status], minWidth: 70, textAlign: 'center' }} className="shrink-0">
                     {apt.status.charAt(0).toUpperCase() + apt.status.slice(1)}
                   </span>
                 </div>
@@ -120,10 +120,10 @@ export default function DashboardPage() {
 
       </div>
 
-      {/* Low Stock Bar */}
-      <div style={{ backgroundColor: 'white', borderTop: '1px solid #E2E8F0', padding: '14px 28px', display: 'flex', alignItems: 'center', gap: 20, position: 'sticky', bottom: 0 }}>
+      {/* Low Stock Bar — wraps on mobile */}
+      <div className="flex-wrap md:flex-nowrap" style={{ backgroundColor: 'white', borderTop: '1px solid #E2E8F0', padding: '14px 28px', display: 'flex', alignItems: 'center', gap: 20, position: 'sticky', bottom: 0 }}>
         <span style={{ fontSize: 13, fontWeight: 700, color: '#EF4444', whiteSpace: 'nowrap' }}>Low Stock Alert!</span>
-        <div style={{ display: 'flex', gap: 12, flex: 1 }}>
+        <div className="flex-wrap md:flex-nowrap" style={{ display: 'flex', gap: 12, flex: 1 }}>
           {data.lowStock.map((item, i) => (
             <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               <span style={{ fontSize: 13, color: '#1E293B' }}>{item.drug}</span>

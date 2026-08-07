@@ -136,7 +136,7 @@ export default function NewPatientPage() {
     <>
       <TopBar title="Patients" onBack={() => router.back()} />
 
-      <div style={{ padding: '32px 40px', flex: 1 }}>
+      <div className="flex-1 px-4 py-8 md:px-10">
 
         {/* Title */}
         <h1 style={{ margin: '0 0 32px', fontSize: 24, fontWeight: 700, color: '#111827' }}>Add New Patient</h1>
@@ -160,8 +160,8 @@ export default function NewPatientPage() {
               </select>
             </div>
 
-            {/* Schedule Date & Time */}
-            <div style={{ display: 'flex', gap: 20, marginBottom: 24 }}>
+            {/* Schedule Date & Time — side by side on desktop, stacked on mobile */}
+            <div className="flex-col md:flex-row" style={{ display: 'flex', gap: 20, marginBottom: 24 }}>
               <div style={{ flex: 1 }}>
                 {getField('Schedule Date')}
                 <input type="date" style={inputStyle()}

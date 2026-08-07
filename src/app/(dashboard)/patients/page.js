@@ -58,9 +58,9 @@ export default function PatientsPage() {
 
       <div style={{ padding: '24px 28px' }}>
 
-        {/* Search + Filter + Add */}
-        <div style={{ backgroundColor: 'white', borderRadius: 12, padding: '16px 20px', display: 'flex', alignItems: 'center', gap: 12, marginBottom: 24, border: '1px solid #F1F5F9', boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}>
-          <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: 10, backgroundColor: 'white', border: '1px solid #E2E8F0', borderRadius: 8, padding: '10px 14px' }}>
+        {/* Search + Filter + Add — stacks on mobile */}
+        <div className="flex-col sm:flex-row" style={{ backgroundColor: 'white', borderRadius: 12, padding: '16px 20px', display: 'flex', alignItems: 'center', gap: 12, marginBottom: 24, border: '1px solid #F1F5F9', boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}>
+          <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: 10, backgroundColor: 'white', border: '1px solid #E2E8F0', borderRadius: 8, padding: '10px 14px' }} className="w-full">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
             </svg>
@@ -85,8 +85,10 @@ export default function PatientsPage() {
           </button>
         </div>
 
-        {/* Table */}
+        {/* Table — horizontally scrollable on mobile */}
         <div style={{ backgroundColor: 'white', borderRadius: 12, overflow: 'hidden', border: '1px solid #F1F5F9', boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}>
+          <div className="overflow-x-auto">
+            <div style={{ minWidth: 860 }}>
           <div style={{ display: 'grid', gridTemplateColumns: '160px 1fr 80px 100px 160px 120px 80px', backgroundColor: '#0D7377', padding: '14px 20px' }}>
             {['ID', 'Full Name', 'Age', 'Gender', 'Phone. No', 'Last Visit', ''].map((h, i) => (
               <span key={i} style={{ fontSize: 13, fontWeight: 600, color: 'white' }}>{h}</span>
@@ -149,12 +151,14 @@ export default function PatientsPage() {
               </div>
             )
           })}
+            </div>
+          </div>
         </div>
 
       </div>
 
-      {/* Pagination */}
-      <div style={{ padding: '16px 28px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 'auto' }}>
+      {/* Pagination — stacks on mobile */}
+      <div className="flex-col sm:flex-row gap-3" style={{ padding: '16px 28px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 'auto' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <span style={{ fontSize: 13, color: '#475569' }}>
             Showing Results {pagination.total > 0 ? `${start}-${end}` : '0'} of {pagination.total} patients

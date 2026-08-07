@@ -53,15 +53,15 @@ export default function PatientProfilePage() {
             </div>
             <h1 style={{ margin: 0, fontSize: 22, fontWeight: 700, color: '#1E293B' }}>{fullName}</h1>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 20, marginBottom: 12 }}>
+          <div className="flex-wrap" style={{ display: 'flex', alignItems: 'center', gap: 20, marginBottom: 12 }}>
             <span style={{ fontSize: 13, color: '#475569' }}>{patient.patientNo}</span>
             <span style={{ fontSize: 13, color: '#475569' }}>{age}</span>
             <span style={{ fontSize: 13, color: '#475569' }}>{patient.gender}</span>
             <span style={{ fontSize: 13, color: '#475569' }}>{patient.bloodGroup}</span>
             <span style={{ fontSize: 13, color: '#475569' }}>{patient.phone}</span>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <div className="flex-col md:flex-row gap-4" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div className="flex-wrap" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               <span style={{ fontSize: 13, color: '#475569' }}>Allergies:</span>
               {(patient.allergies || []).length > 0
                 ? (patient.allergies || []).map((a, i) => (
@@ -70,7 +70,7 @@ export default function PatientProfilePage() {
                 : <span style={{ fontSize: 13, color: '#94A3B8' }}>None</span>
               }
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <div className="flex-wrap" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
               <button style={{ padding: '10px 20px', backgroundColor: '#0D7377', color: 'white', border: 'none', borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: 'pointer' }}>New Appointment</button>
               <button style={{ padding: '10px 20px', backgroundColor: 'white', color: '#1E293B', border: '1px solid #E2E8F0', borderRadius: 8, fontSize: 13, fontWeight: 500, cursor: 'pointer' }}>New Consultation</button>
               <button style={{ padding: '10px 20px', backgroundColor: 'white', color: '#1E293B', border: '1px solid #E2E8F0', borderRadius: 8, fontSize: 13, fontWeight: 500, cursor: 'pointer' }}>New Invoice</button>
@@ -81,7 +81,7 @@ export default function PatientProfilePage() {
 
         {/* Tabs + table */}
         <div style={{ backgroundColor: 'white', borderRadius: 12, border: '1px solid #F1F5F9', boxShadow: '0 1px 3px rgba(0,0,0,0.06)', overflow: 'hidden' }}>
-          <div style={{ display: 'flex', borderBottom: '1px solid #E2E8F0', padding: '0 24px' }}>
+          <div className="overflow-x-auto" style={{ display: 'flex', borderBottom: '1px solid #E2E8F0', padding: '0 24px' }}>
             {tabs.map(tab => (
               <button key={tab} onClick={() => setActiveTab(tab.toLowerCase().replace(' ', ''))} style={{
                 padding: '16px 16px 14px', marginRight: 8,
@@ -98,7 +98,8 @@ export default function PatientProfilePage() {
           </div>
 
           {activeTab === 'overview' && (
-            <div>
+            <div className="overflow-x-auto">
+              <div style={{ minWidth: 640 }}>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 80px', backgroundColor: '#0D7377', padding: '14px 24px' }}>
                 {['Date', 'Attending Doctor', 'Complaint', ''].map((h, i) => (
                   <span key={i} style={{ fontSize: 13, fontWeight: 600, color: 'white' }}>{h}</span>
@@ -128,6 +129,7 @@ export default function PatientProfilePage() {
                   </div>
                 </div>
               ))}
+              </div>
             </div>
           )}
 
