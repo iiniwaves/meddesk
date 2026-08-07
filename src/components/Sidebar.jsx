@@ -18,8 +18,10 @@ const navBottom = [
   { label: 'Staff', icon: 'staff', href: '/staff' },
 ]
 
-function NavIcon({ name }) {
-  const common = { width: 22, height: 22, viewBox: '0 0 24 24', fill: 'none', stroke: 'white', strokeWidth: '1.8', strokeLinecap: 'round', strokeLinejoin: 'round' }
+function NavIcon({ name, active }) {
+  const stroke = 'white'
+  const sw = '1.8'
+  const common = { width: 22, height: 22, viewBox: '0 0 24 24', fill: 'none', stroke, strokeWidth: sw, strokeLinecap: 'round', strokeLinejoin: 'round' }
 
   switch (name) {
     case 'home':
@@ -47,7 +49,7 @@ function NavIcon({ name }) {
   }
 }
 
-export default function Sidebar({ isOpen, onClose }) {
+export default function Sidebar() {
   const pathname = usePathname()
 
   function isActive(href) {
@@ -55,105 +57,52 @@ export default function Sidebar({ isOpen, onClose }) {
     return pathname.startsWith(href)
   }
 
-  function renderNavItems(items, onClick) {
+  function renderNav(items) {
     return items.map(item => {
       const active = isActive(item.href)
       return (
-        <Link
-          key={item.label}
-          href={item.href}
-          onClick={onClick}
-          className={[
-            'flex items-center gap-[14px] rounded-xl text-white transition-opacity duration-150 block',
-            'py-3.5 px-4 mb-2 text-sm whitespace-nowrap min-h-[48px]',
-            active ? 'bg-[#0D7377] font-semibold opacity-100' : 'opacity-70 hover:opacity-100',
-          ].join(' ')}
-        >
-          <NavIcon name={item.icon} />
+        <Link key={item.label} href={item.href} style={{
+          display: 'flex', alignItems: 'center', gap: 14,
+          padding: '12px 16px', marginBottom: 8,
+          textDecoration: 'none', color: 'white',
+          backgroundColor: active ? '#0D7377' : 'transparent',
+          borderRadius: 10, fontSize: 14,
+          fontWeight: active ? 600 : 400,
+          opacity: active ? 1 : 0.7,
+        }}>
+          <NavIcon name={item.icon} active={active} />
           {item.label}
         </Link>
       )
     })
   }
 
-  // Shared sidebar content — reused for both desktop and mobile
-  const sidebarContent = (
-    <>
-      {/* Logo */}
-      <div className="pt-6 pb-8 px-5">
-        <div className="flex items-center gap-2.5">
-          <div className="w-9 h-9 rounded-full bg-[#0D7377] flex items-center justify-center">
-            <span className="text-[#4ADE80] text-lg leading-none">★</span>
-          </div>
-          <span className="text-white font-bold text-base tracking-tight">MedicDesk</span>
-        </div>
-      </div>
-
-      {/* Top nav */}
-      <nav className="px-4">{renderNavItems(navTop)}</nav>
-
-      <div className="flex-1" />
-
-      {/* Bottom nav */}
-      <nav className="px-4">{renderNavItems(navBottom)}</nav>
-
-      <div className="flex-1" />
-
-      {/* Settings */}
-      <div className="pb-10 px-4">
-        {renderNavItems([{ label: 'Settings', icon: 'settings', href: '/settings' }], onClose)}
-      </div>
-    </>
-  )
-
   return (
-    <>
-      {/* Desktop sidebar — fixed, always visible on md+ */}
-      <aside className="hidden md:flex md:w-[216px] md:flex-col md:fixed md:top-0 md:left-0 md:h-full md:z-40 bg-[#0F3460]">
-        {sidebarContent}
-      </aside>
-
-      {/* Mobile drawer — off-screen by default */}
-      <div
-        className={[
-          'md:hidden', // only rendered on small screens
-        ].join(' ')}
-      >
-        {/* Backdrop + drawer wrapper */}
-        <div
-          className="fixed inset-0 z-40"
-          style={{ display: isOpen ? 'block' : 'none' }}
-        >
-          {/* Dark backdrop */}
-          <div
-            className="absolute inset-0 bg-black/40"
-            onClick={onClose}
-          />
-          {/* Slide-in panel */}
-          <aside
-            className="absolute top-0 left-0 h-full w-[260px] max-w-[85vw] flex flex-col bg-[#0F3460] overflow-y-auto"
-            style={{
-              transform: isOpen ? 'translateX(0)' : 'translateX(-100%)',
-              transition: 'transform 0.2s ease-out',
-            }}
-          >
-            {/* Close button */}
-            <button
-              type="button"
-              onClick={onClose}
-              aria-label="Close menu"
-              className="absolute top-4 right-4 p-1 text-white/70 hover:text-white border-none bg-transparent cursor-pointer"
-            >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <line x1="18" y1="6" x2="6" y2="18" />
-                <line x1="6" y1="6" x2="18" y2="18" />
-              </svg>
-            </button>
-
-            {sidebarContent}
-          </aside>
+    <div style={{ width: 216, backgroundColor: '#0F3460', display: 'flex', flexDirection: 'column', position: 'fixed', top: 0, left: 0, height: '100vh', zIndex: 20 }}>
+      <div style={{ padding: '24px 20px 32px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <div style={{ width: 36, height: 36, borderRadius: '50%', backgroundColor: '#0D7377', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <span style={{ color: '#4ADE80', fontSize: 18 }}>★</span>
+          </div>
+          <span style={{ color: 'white', fontWeight: 700, fontSize: 17 }}>MedicDesk</span>
         </div>
       </div>
-    </>
+
+      <nav style={{ padding: '0 16px' }}>{renderNav(navTop)}</nav>
+      <div style={{ flex: 1 }} />
+      <nav style={{ padding: '0 16px' }}>{renderNav(navBottom)}</nav>
+      <div style={{ flex: 1 }} />
+
+      <div style={{ padding: '0 16px 40px' }}>
+        <Link href="/settings" style={{
+          display: 'flex', alignItems: 'center', gap: 14,
+          padding: '12px 16px', textDecoration: 'none',
+          color: 'white', borderRadius: 10, fontSize: 14, opacity: 0.7,
+        }}>
+          <NavIcon name="settings" active={false} />
+          Settings
+        </Link>
+      </div>
+    </div>
   )
 }

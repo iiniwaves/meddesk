@@ -17,9 +17,15 @@ export default function DashboardPage() {
         { value: String(data.stats.todayPatients), label: "Today's Patients", trend: 'up', trendText: '12.8% more this month' },
         { value: String(data.stats.appointments), label: 'Appointments', trend: 'down', trendText: '17.8% less this month' },
         { value: '₦97,000', label: 'Revenue Today', trend: 'up', trendText: '12.8% more this month' },
-        { value: String(data.lowStock.length), label: 'Inventory Alert', trend: 'down', trendText: `${data.lowStock.length} item${data.lowStock.length > 1 ? 's' : ''} low` },
+        { value: String(data.lowStock.length), label: 'Inventory', trend: 'down', trendText: '17.8% less this month' },
       ]
     : []
+
+  const statusStyle = {
+    done: { backgroundColor: '#22C55E', color: 'white' },
+    pending: { backgroundColor: '#F59E0B', color: 'white' },
+    confirmed: { backgroundColor: '#0D7377', color: 'white' },
+  }
 
   function getInitials(name) {
     if (!name) return 'MD'
@@ -30,8 +36,8 @@ export default function DashboardPage() {
     return (
       <>
         <TopBar greeting />
-        <div className="flex-1 flex items-center justify-center">
-          <p className="text-sm text-[#475569]">Loading...</p>
+        <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <p style={{ color: '#475569', fontSize: 14 }}>Loading...</p>
         </div>
       </>
     )
@@ -41,27 +47,24 @@ export default function DashboardPage() {
     <>
       <TopBar greeting />
 
-      <main className="p-4 md:p-7 pb-4 md:pb-7 flex-1 overflow-y-auto">
+      <div style={{ padding: '24px 28px', flex: 1 }}>
 
-        {/* ── Stats Cards ── */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        {/* Stats */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16, marginBottom: 24 }}>
           {stats.map(stat => (
-            <div key={stat.label} className={[
-              'bg-white rounded-xl border border-[#F1F5F9] shadow-sm p-4 md:p-5',
-              // Mobile: horizontal card layout — value prominent, label to the side
-              'flex flex-col sm:flex-row sm:items-center sm:justify-between sm:gap-4',
-            ].join(' ')}>
-              {/* Label — mobile: top-left | desktop: top */}
-              <div className="mb-2 sm:mb-0 sm:order-1">
-                <p className="text-sm text-[#94A3B8] m-0">{stat.label}</p>
-                <p className="text-2xl md:text-3xl font-bold text-[#1E293B] tracking-tight mt-1">{stat.value}</p>
+            <div key={stat.label} style={{ backgroundColor: 'white', borderRadius: 12, padding: '20px 20px 16px', boxShadow: '0 1px 3px rgba(0,0,0,0.06)', border: '1px solid #F1F5F9' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10 }}>
+                <p style={{ margin: 0, fontSize: 13, color: '#94A3B8', fontWeight: 400 }}>{stat.label}</p>
+                <button style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, color: '#CBD5E1', fontSize: 18, lineHeight: 1 }}>⋮</button>
               </div>
-
-              {/* Trend — mobile: below value | desktop: right side */}
-              <div className={['inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium',
-                stat.trend === 'up' ? 'bg-[#DCFCE7] text-[#166534]' : 'bg-[#FEE2E2] text-[#991B1B]',
-                'sm:order-2',
-              ].join(' ')}>
+              <p style={{ margin: '0 0 12px', fontSize: 30, fontWeight: 700, color: '#1E293B', letterSpacing: '-0.5px' }}>{stat.value}</p>
+              <div style={{
+                display: 'inline-flex', alignItems: 'center', gap: 5,
+                padding: '4px 10px', borderRadius: 999,
+                backgroundColor: stat.trend === 'up' ? '#DCFCE7' : '#FEE2E2',
+                color: stat.trend === 'up' ? '#166534' : '#991B1B',
+                fontSize: 11, fontWeight: 500
+              }}>
                 {stat.trend === 'up'
                   ? <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18" /><polyline points="17 6 23 6 23 12" /></svg>
                   : <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6" /><polyline points="17 18 23 18 23 12" /></svg>
@@ -72,114 +75,64 @@ export default function DashboardPage() {
           ))}
         </div>
 
-        {/* ── Middle Row: Appointments + Recent Patients ── */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
+        {/* Middle row */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 24 }}>
 
           {/* Appointments */}
-          <div className="bg-white rounded-xl border border-[#F1F5F9] shadow-sm p-4 md:p-5">
-            <h2 className="m-0 mb-4 text-base md:text-lg font-bold text-[#1E293B]">Today&apos;s Appointments</h2>
-
-            <div className="space-y-0">
-              {data.appointments.slice(0, 4).map((apt, i) => (
-                <div key={i} className={[
-                  'flex items-center gap-3 py-3',
-                  i > 0 && 'border-t border-[#F1F5F9]',
-                ].join(' ')}>
-                  {/* Patient */}
-                  <span className="flex-1 min-w-0 text-sm text-[#1E293B] truncate">{apt.patient}</span>
-                  {/* Time */}
-                  <span className="w-16 md:w-20 text-xs md:text-sm text-[#64748B] shrink-0 text-right tabular-nums hidden sm:block">{apt.time}</span>
-                  {/* Doctor — hide on small screens */}
-                  <span className="hidden lg:block w-28 text-xs md:text-sm text-[#64748B] shrink-0 truncate pr-2">{apt.doctor}</span>
-                  {/* Status badge */}
-                  <span className={[
-                    'px-2.5 py-1 rounded-full text-xs font-semibold shrink-0',
-                    apt.status === 'done' ? 'bg-[#22C55E]/10 text-[#15803D]' :
-                    apt.status === 'pending' ? 'bg-[#F59E0B]/10 text-[#B45309]' :
-                    'bg-[#0D7377]/10 text-[#0D7377]',
-                  ].join(' ')}>
+          <div style={{ backgroundColor: 'white', borderRadius: 12, padding: '20px 24px', boxShadow: '0 1px 3px rgba(0,0,0,0.06)', border: '1px solid #F1F5F9' }}>
+            <h2 style={{ margin: '0 0 20px', fontSize: 17, fontWeight: 700, color: '#1E293B' }}>Today&apos;s Appointments</h2>
+            <div>
+              {data.appointments.map((apt, i) => (
+                <div key={i} style={{ display: 'flex', alignItems: 'center', padding: '12px 0', borderTop: i === 0 ? 'none' : '1px solid #F8FAFC' }}>
+                  <span style={{ flex: 1, fontSize: 14, color: '#1E293B', fontWeight: 400 }}>{apt.patient}</span>
+                  <span style={{ width: 80, fontSize: 13, color: '#64748B' }}>{apt.time}</span>
+                  <span style={{ width: 100, fontSize: 13, color: '#64748B' }}>{apt.doctor}</span>
+                  <span style={{ padding: '4px 14px', borderRadius: 999, fontSize: 12, fontWeight: 600, ...statusStyle[apt.status], minWidth: 70, textAlign: 'center' }}>
                     {apt.status.charAt(0).toUpperCase() + apt.status.slice(1)}
                   </span>
                 </div>
               ))}
             </div>
-
-            <div className="mt-4 text-right">
-              <a href="/appointments" className="text-sm text-[#0D7377] underline">View All</a>
+            <div style={{ marginTop: 16, textAlign: 'right' }}>
+              <a href="/appointments" style={{ fontSize: 13, color: '#0D7377', textDecoration: 'underline' }}>View All Appointments</a>
             </div>
           </div>
 
           {/* Recent Patients */}
-          <div className="bg-white rounded-xl border border-[#F1F5F9] shadow-sm p-4 md:p-5">
-            <h2 className="m-0 mb-4 text-base md:text-lg font-bold text-[#1E293B]">Recent Patients</h2>
-
-            <div className="space-y-0">
-              {data.recentPatients.slice(0, 4).map((p, i) => (
-                <div key={i} className={[
-                  'py-3',
-                  i > 0 && 'border-t border-[#F1F5F9]',
-                ].join(' ')}>
-                  {/* Mobile: avatar + name on one line, info stacked below */}
-                  <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-full bg-[#E6F4F4] flex items-center justify-center flex-shrink-0">
-                      <span className="text-xs md:text-sm font-bold text-[#0D7377]">{getInitials(p.name)}</span>
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <span className="text-sm text-[#1E293B] block truncate">{p.name}</span>
-                      <span className="text-xs text-[#94A3B8] sm:hidden">{p.info}</span>
-                    </div>
-                    {/* Info only visible on tablet+ */}
-                    <span className="hidden sm:inline text-xs md:text-sm text-[#94A3B8] shrink-0">{p.info}</span>
+          <div style={{ backgroundColor: 'white', borderRadius: 12, padding: '20px 24px', boxShadow: '0 1px 3px rgba(0,0,0,0.06)', border: '1px solid #F1F5F9' }}>
+            <h2 style={{ margin: '0 0 20px', fontSize: 17, fontWeight: 700, color: '#1E293B' }}>Recent Patients</h2>
+            <div>
+              {data.recentPatients.map((p, i) => (
+                <div key={i} style={{ display: 'flex', alignItems: 'center', padding: '12px 0', borderTop: i === 0 ? 'none' : '1px solid #F8FAFC' }}>
+                  <div style={{ width: 36, height: 36, borderRadius: '50%', backgroundColor: '#E6F4F4', display: 'flex', alignItems: 'center', justifyContent: 'center', marginRight: 12, flexShrink: 0 }}>
+                    <span style={{ fontSize: 12, fontWeight: 700, color: '#0D7377' }}>{getInitials(p.name)}</span>
                   </div>
+                  <span style={{ flex: 1, fontSize: 14, color: '#1E293B' }}>{p.name}</span>
+                  <span style={{ fontSize: 13, color: '#94A3B8' }}>{p.info}</span>
                 </div>
               ))}
             </div>
-
-            <div className="mt-4 text-right">
-              <a href="/patients" className="text-sm text-[#0D7377] underline">View All</a>
+            <div style={{ marginTop: 16, textAlign: 'right' }}>
+              <a href="/patients" style={{ fontSize: 13, color: '#0D7377', textDecoration: 'underline' }}>View All Patients</a>
             </div>
           </div>
         </div>
 
-        {/* ── Low Stock Alerts ── */}
-        {data.lowStock.length > 0 && (
-          <div className="bg-white rounded-xl border border-[#F1F5F9] shadow-sm overflow-hidden">
-            <div className="bg-[#FEF3C7] px-4 py-3 flex items-center gap-2">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#B45309" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
-                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
-                <line x1="12" y1="9" x2="12" y2="13" />
-                <line x1="12" y1="17" x2="12.01" y2="17" />
-              </svg>
-              <span className="text-sm font-semibold text-[#B45309]">Low Stock Alert</span>
-            </div>
+      </div>
 
-            {/* Desktop: horizontal scrollable bar */}
-            <div className="hidden md:flex items-center gap-3 px-5 py-3 overflow-x-auto">
-              {data.lowStock.map((item, i) => (
-                <div key={i} className="flex items-center gap-2 shrink-0">
-                  <span className="text-sm text-[#1E293B]">{item.drug}</span>
-                  <span className="px-2.5 py-0.5 rounded-full bg-[#F59E0B] text-white text-xs font-semibold whitespace-nowrap">{item.qty} Left</span>
-                  <button className="w-6 h-6 rounded-full bg-[#0D7377] border-none text-white text-sm cursor-pointer flex items-center justify-center leading-none">+</button>
-                </div>
-              ))}
+      {/* Low Stock Bar */}
+      <div style={{ backgroundColor: 'white', borderTop: '1px solid #E2E8F0', padding: '14px 28px', display: 'flex', alignItems: 'center', gap: 20, position: 'sticky', bottom: 0 }}>
+        <span style={{ fontSize: 13, fontWeight: 700, color: '#EF4444', whiteSpace: 'nowrap' }}>Low Stock Alert!</span>
+        <div style={{ display: 'flex', gap: 12, flex: 1 }}>
+          {data.lowStock.map((item, i) => (
+            <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <span style={{ fontSize: 13, color: '#1E293B' }}>{item.drug}</span>
+              <span style={{ padding: '3px 12px', borderRadius: 999, backgroundColor: '#F59E0B', color: 'white', fontSize: 12, fontWeight: 600 }}>{item.qty} Left</span>
+              <button style={{ width: 22, height: 22, borderRadius: '50%', backgroundColor: '#0D7377', border: 'none', color: 'white', fontSize: 16, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', lineHeight: 1 }}>+</button>
             </div>
-
-            {/* Mobile: vertical list of alert chips */}
-            <div className="md:hidden divide-y divide-[#F1F5F9]">
-              {data.lowStock.map((item, i) => (
-                <div key={i} className="flex items-center justify-between py-3 px-4">
-                  <div className="flex items-center gap-2.5">
-                    <span className="text-sm text-[#1E293B]">{item.drug}</span>
-                    <span className="px-2.5 py-0.5 rounded-full bg-[#F59E0B]/10 text-[#B45309] text-xs font-semibold">{item.qty} Left</span>
-                  </div>
-                  <button className="w-8 h-8 rounded-full bg-[#0D7377] border-none text-white text-lg cursor-pointer flex items-center justify-center leading-none active:bg-[#085050]">+</button>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-      </main>
+          ))}
+        </div>
+      </div>
     </>
   )
 }

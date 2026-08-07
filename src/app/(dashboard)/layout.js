@@ -3,13 +3,11 @@
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
-import { SidebarProvider, useSidebar } from './providers/SidebarProvider'
 import Sidebar from '@/components/Sidebar'
 
-function DashboardInnerLayout({ children }) {
+export default function DashboardLayout({ children }) {
   const { status } = useSession()
   const router = useRouter()
-  const sidebar = useSidebar()
 
   useEffect(() => {
     if (status === 'unauthenticated') router.push('/login')
@@ -17,29 +15,18 @@ function DashboardInnerLayout({ children }) {
 
   if (status === 'loading') {
     return (
-      <div className="min-h-screen bg-[#F1F5F9] flex items-center justify-center">
-        <p className="text-sm text-[#475569]">Loading...</p>
+      <div style={{ minHeight: '100vh', backgroundColor: '#F1F5F9', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <p style={{ color: '#475569', fontSize: 14 }}>Loading...</p>
       </div>
     )
   }
 
   return (
-    <div className="flex min-h-screen bg-[#F8FAFC]" style={{ fontFamily: 'Inter, -apple-system, sans-serif' }}>
-      {/* Desktop sidebar — controlled by layout */}
-      <Sidebar isOpen={sidebar.open} onClose={sidebar.close} />
-
-      {/* Main content area */}
-      <div className="flex-1 flex flex-col min-h-0 md:ml-[216px]">
+    <div style={{ display: 'flex', minHeight: '100vh', backgroundColor: '#F8FAFC', fontFamily: 'Inter, -apple-system, sans-serif' }}>
+      <Sidebar />
+      <div style={{ marginLeft: 216, flex: 1, display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
         {children}
       </div>
     </div>
-  )
-}
-
-export default function DashboardLayout({ children }) {
-  return (
-    <SidebarProvider>
-      <DashboardInnerLayout>{children}</DashboardInnerLayout>
-    </SidebarProvider>
   )
 }
