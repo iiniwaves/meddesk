@@ -65,7 +65,7 @@ export default function Sidebar({ isOpen, onClose }) {
           onClick={onClick}
           className={[
             'flex items-center gap-[14px] rounded-xl text-white transition-opacity duration-150 block',
-            'px-4 py-3 mb-2 text-sm whitespace-nowrap',
+            'py-3.5 px-4 mb-2 text-sm whitespace-nowrap min-h-[48px]',
             active ? 'bg-[#0D7377] font-semibold opacity-100' : 'opacity-70 hover:opacity-100',
           ].join(' ')}
         >

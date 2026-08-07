@@ -26,33 +26,9 @@ export default function NewPatientPage() {
     '12:00PM', '01:00PM', '02:00PM', '03:00PM', '04:00PM', '05:00PM',
   ]
 
-  // Map display doctor names to DB IDs
   const doctorMap = {
     'Dr Danladi': 'dr.danladi@medicdesk.com',
     'Dr. Chidi': 'dr.chidi@medicdesk.com',
-  }
-
-  function getField(label) {
-    return (
-      <label className="block text-sm font-medium text-[#374151] mb-1.5">
-        {label}
-      </label>
-    )
-  }
-
-  function inputStyle(hasIcon = false) {
-    return {
-      width: '100%',
-      height: 48,
-      padding: `0 ${hasIcon ? 40 : 14}px`,
-      border: '1px solid #D1D5DB',
-      borderRadius: 8,
-      fontSize: 14,
-      color: '#1F2937',
-      outline: 'none',
-      backgroundColor: 'white',
-      boxSizing: 'border-box',
-    }
   }
 
   async function handleSubmit(e) {
@@ -70,12 +46,10 @@ export default function NewPatientPage() {
     setError('')
 
     try {
-      // Split name into first + last
       const parts = formData.patientName.trim().split(' ')
       const firstName = parts[0]
       const lastName = parts.slice(1).join(' ') || ''
 
-      // Create patient
       const patientRes = await fetch('/api/patients', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -96,7 +70,6 @@ export default function NewPatientPage() {
 
       const createdPatient = await patientRes.json()
 
-      // Format time for DB (convert "08:00AM" to "08:00")
       const formatTime = (t) => t.replace(/AM|PM/g, '').trim()
       const isPM = formData.time.toUpperCase().includes('PM')
       let [hours, rest] = formatTime(formData.time).split(':').map(Number)
@@ -104,7 +77,6 @@ export default function NewPatientPage() {
       if (!isPM && hours === 12) hours = 0
       const dbTime = `${String(hours).padStart(2, '0')}:${String(rest).padStart(2, '0')}`
 
-      // Schedule an appointment
       const apptRes = await fetch('/api/appointments', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -121,7 +93,6 @@ export default function NewPatientPage() {
       if (!apptRes.ok) {
         const errBody = await apptRes.json()
         console.error('Appointment creation failed:', errBody.error)
-        // Still redirect — patient was created successfully
       }
 
       router.push('/patients')
@@ -132,93 +103,154 @@ export default function NewPatientPage() {
     }
   }
 
+  // Shared input field component
+  function Field({ label, children, className }) {
+    return (
+      <div className={['mb-6', className].filter(Boolean).join(' ')}>
+        <label className="block text-sm font-medium text-[#374151] mb-2">{label}</label>
+        {children}
+      </div>
+    )
+  }
+
+  // Shared input style — taller on mobile for better touch targets
+  function inputStyle(hasIcon = false) {
+    return {
+      width: '100%',
+      height: 52,
+      padding: `0 ${hasIcon ? 40 : 14}px`,
+      border: '1px solid #D1D5DB',
+      borderRadius: 10,
+      fontSize: 15,
+      color: '#1F2937',
+      outline: 'none',
+      backgroundColor: 'white',
+      boxSizing: 'border-box',
+    }
+  }
+
   return (
     <>
       <TopBar title="Patients" onBack={() => router.back()} />
 
-      <main className="p-4 md:p-10 flex-1">
+      {/* Scrollable content area */}
+      <main className="p-4 pb-28 md:pb-10 flex-1 overflow-y-auto">
 
-        {/* Title */}
-        <h1 className="m-0 mb-8 text-2xl font-bold text-[#111827]">Add New Patient</h1>
+        {/* Page heading — more prominent on mobile */}
+        <div className="mb-8">
+          <h1 className="text-xl md:text-2xl font-bold text-[#111827] m-0">Add New Patient</h1>
+          <p className="text-sm text-[#64748B] mt-1 hidden md:block">Fill in the patient details below.</p>
+        </div>
 
         <form onSubmit={handleSubmit}>
-          <div className="w-full max-w-[640px]">
-            {/* Patient Name */}
-            <div className="mb-6">
-              {getField('Patient Name')}
-              <input type="text" placeholder="type name here" style={inputStyle(false)} value={formData.patientName}
-                onChange={e => setFormData({ ...formData, patientName: e.target.value })} />
+          <div className="w-full max-w-[640px] mx-auto">
+
+            {/* ── Section: Patient Info ── */}
+            <div className="bg-white rounded-xl border border-[#E2E8F0] p-5 mb-6">
+              <Field label="Patient Name">
+                <input
+                  type="text"
+                  placeholder="e.g. Adebayo Johnson"
+                  className="transition-shadow focus:ring-2 focus:ring-[#0D7377]/20 focus:border-[#0D7377]"
+                  style={inputStyle(false)}
+                  value={formData.patientName}
+                  onChange={e => setFormData({ ...formData, patientName: e.target.value })}
+                />
+              </Field>
+
+              <Field label="Doctor">
+                <select
+                  value={formData.doctor}
+                  onChange={e => setFormData({ ...formData, doctor: e.target.value })}
+                  className="transition-shadow focus:ring-2 focus:ring-[#0D7377]/20 focus:border-[#0D7377]"
+                  style={{ ...inputStyle(), appearance: 'auto', cursor: 'pointer', colorScheme: 'light' }}
+                >
+                  {doctors.map(d => <option key={d}>{d}</option>)}
+                </select>
+              </Field>
             </div>
 
-            {/* Doctor */}
-            <div className="mb-6">
-              {getField('Doctor')}
-              <select value={formData.doctor}
-                onChange={e => setFormData({ ...formData, doctor: e.target.value })}
-                style={{ ...inputStyle(), appearance: 'auto', cursor: 'pointer' }}>
-                {doctors.map(d => <option key={d}>{d}</option>)}
-              </select>
-            </div>
-
-            {/* Schedule Date & Time */}
-            <div className="mb-6 flex flex-col sm:flex-row gap-5">
-              <div className="flex-1">
-                {getField('Schedule Date')}
-                <input type="date" style={inputStyle()}
+            {/* ── Section: Appointment Details ── */}
+            <div className="bg-white rounded-xl border border-[#E2E8F0] p-5 mb-6">
+              <Field label="Schedule Date">
+                <input
+                  type="date"
+                  className="transition-shadow focus:ring-2 focus:ring-[#0D7377]/20 focus:border-[#0D7377]"
+                  style={inputStyle()}
                   value={formData.scheduleDate}
-                  onChange={e => setFormData({ ...formData, scheduleDate: e.target.value })} />
-              </div>
-              <div className="flex-1">
-                {getField('Time')}
-                <select value={formData.time}
+                  onChange={e => setFormData({ ...formData, scheduleDate: e.target.value })}
+                />
+              </Field>
+
+              <Field label="Time">
+                <select
+                  value={formData.time}
                   onChange={e => setFormData({ ...formData, time: e.target.value })}
-                  style={{ ...inputStyle(), appearance: 'auto', cursor: 'pointer' }}>
+                  className="transition-shadow focus:ring-2 focus:ring-[#0D7377]/20 focus:border-[#0D7377]"
+                  style={{ ...inputStyle(), appearance: 'auto', cursor: 'pointer', colorScheme: 'light' }}
+                >
                   {times.map(t => <option key={t}>{t}</option>)}
                 </select>
-              </div>
+              </Field>
+
+              <Field label="Visit Type">
+                <select
+                  value={formData.visitType}
+                  onChange={e => setFormData({ ...formData, visitType: e.target.value })}
+                  className="transition-shadow focus:ring-2 focus:ring-[#0D7377]/20 focus:border-[#0D7377]"
+                  style={{ ...inputStyle(), appearance: 'auto', cursor: 'pointer', colorScheme: 'light' }}
+                >
+                  {visitTypes.map(v => <option key={v}>{v}</option>)}
+                </select>
+              </Field>
             </div>
 
-            {/* Visit Type */}
-            <div className="mb-6">
-              {getField('Visit Type')}
-              <select value={formData.visitType}
-                onChange={e => setFormData({ ...formData, visitType: e.target.value })}
-                style={{ ...inputStyle(), appearance: 'auto', cursor: 'pointer' }}>
-                {visitTypes.map(v => <option key={v}>{v}</option>)}
-              </select>
-            </div>
-
-            {/* Reason For Visit */}
-            <div className="mb-8">
-              {getField('Reason For Visit')}
-              <textarea rows={4} placeholder="Complaints here..."
-                style={{ ...inputStyle(), padding: '14px', resize: 'vertical', fontFamily: 'inherit' }}
-                value={formData.reason}
-                onChange={e => setFormData({ ...formData, reason: e.target.value })} />
+            {/* ── Section: Reason ── */}
+            <div className="bg-white rounded-xl border border-[#E2E8F0] p-5 mb-6">
+              <Field label="Reason For Visit">
+                <textarea
+                  rows={4}
+                  placeholder="Complaints here..."
+                  className="resize-none transition-shadow focus:ring-2 focus:ring-[#0D7377]/20 focus:border-[#0D7377]"
+                  style={{ ...inputStyle(), padding: '14px', resize: 'vertical', fontFamily: 'inherit' }}
+                  value={formData.reason}
+                  onChange={e => setFormData({ ...formData, reason: e.target.value })}
+                />
+              </Field>
             </div>
 
             {/* Error message */}
-            {error && <p className="text-sm text-[#EF4444] mb-4">{error}</p>}
-
-            {/* Save Button */}
-            <button type="submit" disabled={loading}
-              style={{
-                width: 120,
-                height: 44,
-                backgroundColor: loading ? '#6B7280' : '#0D7377',
-                color: 'white',
-                border: 'none',
-                borderRadius: 8,
-                fontSize: 15,
-                fontWeight: 600,
-                cursor: loading ? 'not-allowed' : 'pointer',
-              }}>
-              {loading ? 'Saving...' : 'Save'}
-            </button>
+            {error && <p className="text-sm text-[#EF4444] mb-4 px-4 bg-[#FEF2F2] border border-[#FECACA] rounded-lg py-2.5">{error}</p>}
           </div>
         </form>
-
       </main>
+
+      {/* ── Sticky Save Bar (mobile) ── */}
+      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-[#E2E8F0] px-4 py-3 shadow-[0_-4px_12px_rgba(0,0,0,0.06)] z-30">
+        <button
+          type="submit"
+          onClick={() => document.querySelector('form').requestSubmit()}
+          disabled={loading}
+          className={[
+            'w-full h-12 rounded-lg text-base font-semibold text-white border-none cursor-pointer transition-colors',
+            loading ? 'bg-[#6B7280]' : 'bg-[#0D7377] active:bg-[#085050]',
+          ].join(' ')}
+        >
+          {loading ? 'Saving...' : 'Save Patient'}
+        </button>
+      </div>
+
+      {/* Desktop Save Button */}
+      <div className="hidden md:flex w-full max-w-[640px] mx-auto mt-4 justify-end">
+        <button
+          type="submit"
+          onClick={() => document.querySelector('form').requestSubmit()}
+          disabled={loading}
+          className="h-12 bg-[#0D7377] hover:bg-[#085050] text-white border-none rounded-lg text-base font-semibold cursor-pointer px-8 transition-colors"
+        >
+          {loading ? 'Saving...' : 'Save Patient'}
+        </button>
+      </div>
     </>
   )
 }

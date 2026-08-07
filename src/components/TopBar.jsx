@@ -27,7 +27,7 @@ export default function TopBar({ title, greeting, onBack }) {
     : title
 
   return (
-    <header className="h-16 bg-white border-b border-[#E2E8F0] flex items-center justify-between px-4 md:px-7 shrink-0">
+    <header className="h-14 md:h-16 bg-white border-b border-[#E2E8F0] flex items-center justify-between px-3 md:px-7 shrink-0">
       {/* Left side — back button or hamburger + title */}
       <div className="flex items-center gap-2 min-w-0">
         {/* Hamburger button — mobile only */}
