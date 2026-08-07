@@ -32,38 +32,34 @@ export default function LoginPage() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: '#F1F5F9', display: 'flex', flexDirection: 'column' }}>
+    <div className="min-h-screen bg-[#F1F5F9] flex flex-col">
       {/* Top bar */}
-      <div style={{ backgroundColor: '#0D7377', padding: '14px 32px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-        <div style={{ width: 32, height: 32, borderRadius: '50%', backgroundColor: '#0F3460', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <span style={{ color: '#14A085', fontSize: 16 }}>★</span>
+      <div className="bg-[#0D7377] py-3.5 md:py-3.5 px-4 md:px-8 flex items-center gap-2.5 shrink-0">
+        <div className="w-8 h-8 rounded-full bg-[#0F3460] flex items-center justify-center">
+          <span className="text-[#14A085] text-lg leading-none">★</span>
         </div>
-        <span style={{ color: 'white', fontWeight: 600, fontSize: 18, letterSpacing: '-0.3px' }}>MedicDesk</span>
+        <span className="text-white font-semibold text-base tracking-tight">MedicDesk</span>
       </div>
 
       {/* Centred card */}
-      <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <div style={{
-          backgroundColor: 'white',
-          borderRadius: 12,
-          padding: '40px 36px',
-          width: 400,
-          boxShadow: '0 4px 24px rgba(0,0,0,0.08)'
-        }}>
+      <div className="flex-1 flex items-center justify-center p-4">
+        <div className={[
+          'bg-white rounded-xl p-8 md:p-9 shadow-sm w-full max-w-[400px]',
+        ].join(' ')}>
           {/* Logo inside card */}
-          <div style={{ textAlign: 'center', marginBottom: 28 }}>
-            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-              <div style={{ width: 32, height: 32, borderRadius: '50%', backgroundColor: '#0F3460', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <span style={{ color: '#14A085', fontSize: 16 }}>★</span>
+          <div className="text-center mb-7">
+            <div className="inline-flex items-center gap-2 mb-1">
+              <div className="w-8 h-8 rounded-full bg-[#0F3460] flex items-center justify-center">
+                <span className="text-[#14A085] text-lg leading-none">★</span>
               </div>
-              <span style={{ fontWeight: 600, fontSize: 22, color: '#1E293B' }}>MedicDesk</span>
+              <span className="font-semibold text-xl text-[#1E293B]">MedicDesk</span>
             </div>
           </div>
 
           <form onSubmit={handleLogin}>
             {/* Email */}
-            <div style={{ marginBottom: 16 }}>
-              <label style={{ display: 'block', fontSize: 14, fontWeight: 500, color: '#1E293B', marginBottom: 6 }}>
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-[#1E293B] mb-1.5">
                 Email
               </label>
               <input
@@ -72,23 +68,16 @@ export default function LoginPage() {
                 value={email}
                 onChange={e => setEmail(e.target.value)}
                 required
-                style={{
-                  width: '100%',
-                  height: 44,
-                  padding: '0 12px',
-                  border: `1px solid ${error ? '#EF4444' : '#CBD5E1'}`,
-                  borderRadius: 8,
-                  fontSize: 14,
-                  color: '#1E293B',
-                  outline: 'none',
-                  boxSizing: 'border-box'
-                }}
+                className={[
+                  'w-full h-11 px-3 border rounded-lg text-sm text-[#1E293B] outline-none box-border',
+                  error ? 'border-[#EF4444]' : 'border-[#CBD5E1]',
+                ].join(' ')}
               />
             </div>
 
             {/* Password */}
-            <div style={{ marginBottom: 8 }}>
-              <label style={{ display: 'block', fontSize: 14, fontWeight: 500, color: '#1E293B', marginBottom: 6 }}>
+            <div className="mb-2">
+              <label className="block text-sm font-medium text-[#1E293B] mb-1.5">
                 Password
               </label>
               <input
@@ -97,54 +86,39 @@ export default function LoginPage() {
                 value={password}
                 onChange={e => setPassword(e.target.value)}
                 required
-                style={{
-                  width: '100%',
-                  height: 44,
-                  padding: '0 12px',
-                  border: `1px solid ${error ? '#EF4444' : '#CBD5E1'}`,
-                  borderRadius: 8,
-                  fontSize: 14,
-                  color: '#1E293B',
-                  outline: 'none',
-                  boxSizing: 'border-box'
-                }}
+                className={[
+                  'w-full h-11 px-3 border rounded-lg text-sm text-[#1E293B] outline-none box-border',
+                  error ? 'border-[#EF4444]' : 'border-[#CBD5E1]',
+                ].join(' ')}
               />
             </div>
 
             {/* Forgot password */}
-            <div style={{ textAlign: 'right', marginBottom: 16 }}>
-              <a href="#" style={{ fontSize: 13, color: '#0D7377', textDecoration: 'none' }}>Forgot Password?</a>
+            <div className="text-right mb-4">
+              <a href="#" className="text-sm text-[#0D7377] no-underline">Forgot Password?</a>
             </div>
 
             {/* Error message */}
             {error && (
-              <p style={{ color: '#EF4444', fontSize: 13, marginBottom: 12, textAlign: 'center' }}>{error}</p>
+              <p className="text-sm text-[#EF4444] mb-3 text-center">{error}</p>
             )}
 
             {/* Login button */}
             <button
               type="submit"
               disabled={loading}
-              style={{
-                width: '100%',
-                height: 48,
-                backgroundColor: loading ? '#5aadaf' : '#0D7377',
-                color: 'white',
-                border: 'none',
-                borderRadius: 8,
-                fontSize: 15,
-                fontWeight: 600,
-                cursor: loading ? 'not-allowed' : 'pointer',
-                marginBottom: 20
-              }}
+              className={[
+                'w-full h-12 bg-[#0D7377] text-white border-none rounded-lg text-base font-semibold cursor-pointer mb-5',
+                loading ? '!bg-[#5AADAF] !cursor-not-allowed' : '',
+              ].join(' ')}
             >
               {loading ? 'Logging in...' : 'Login'}
             </button>
 
             {/* Footer */}
-            <p style={{ textAlign: 'center', fontSize: 13, color: '#475569', margin: 0 }}>
+            <p className="text-center text-sm text-[#475569] m-0">
               New clinic?{' '}
-              <a href="#" style={{ color: '#0D7377', fontWeight: 500, textDecoration: 'underline' }}>
+              <a href="#" className="text-[#0D7377] font-medium underline">
                 Start free trial
               </a>
             </p>

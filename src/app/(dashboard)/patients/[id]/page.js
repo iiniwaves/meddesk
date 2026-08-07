@@ -22,8 +22,8 @@ export default function PatientProfilePage() {
     return (
       <>
         <TopBar title="Patient's Profile" onBack={() => router.back()} />
-        <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <p style={{ color: '#475569', fontSize: 14 }}>Loading...</p>
+        <div className="flex-1 flex items-center justify-center">
+          <p className="text-sm text-[#475569]">Loading...</p>
         </div>
       </>
     )
@@ -43,85 +43,95 @@ export default function PatientProfilePage() {
     <>
       <TopBar title="Patient's Profile" onBack={() => router.back()} />
 
-      <div style={{ padding: '24px 28px' }}>
+      <main className="p-4 md:p-7 flex-1">
 
         {/* Profile card */}
-        <div style={{ backgroundColor: 'white', borderRadius: 12, padding: '24px 28px', marginBottom: 24, border: '1px solid #F1F5F9', boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 12 }}>
-            <div style={{ width: 56, height: 56, borderRadius: '50%', backgroundColor: '#E6F4F4', border: '2px solid #0D7377', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-              <span style={{ fontSize: 18, fontWeight: 700, color: '#0D7377' }}>{getInitials(fullName)}</span>
+        <div className="bg-white rounded-xl p-5 md:p-7 mb-6 border border-[#F1F5F9] shadow-sm">
+          {/* Name row */}
+          <div className="flex items-center gap-4 mb-3">
+            <div className="w-14 h-14 rounded-full bg-[#E6F4F4] border-2 border-[#0D7377] flex items-center justify-center flex-shrink-0">
+              <span className="text-base font-bold text-[#0D7377]">{getInitials(fullName)}</span>
             </div>
-            <h1 style={{ margin: 0, fontSize: 22, fontWeight: 700, color: '#1E293B' }}>{fullName}</h1>
+            <h1 className="text-xl md:text-2xl font-bold text-[#1E293B] m-0">{fullName}</h1>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 20, marginBottom: 12 }}>
-            <span style={{ fontSize: 13, color: '#475569' }}>{patient.patientNo}</span>
-            <span style={{ fontSize: 13, color: '#475569' }}>{age}</span>
-            <span style={{ fontSize: 13, color: '#475569' }}>{patient.gender}</span>
-            <span style={{ fontSize: 13, color: '#475569' }}>{patient.bloodGroup}</span>
-            <span style={{ fontSize: 13, color: '#475569' }}>{patient.phone}</span>
+
+          {/* Info row — wraps gracefully */}
+          <div className="flex flex-wrap items-center gap-x-5 gap-y-1.5 mb-3">
+            <span className="text-sm text-[#475569]">{patient.patientNo}</span>
+            <span className="text-sm text-[#475569]">{age}</span>
+            <span className="text-sm text-[#475569]">{patient.gender}</span>
+            <span className="text-sm text-[#475569]">{patient.bloodGroup}</span>
+            <span className="text-sm text-[#475569] truncate">{patient.phone}</span>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <span style={{ fontSize: 13, color: '#475569' }}>Allergies:</span>
+
+          {/* Allergies + Action buttons */}
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="text-sm text-[#475569]">Allergies:</span>
               {(patient.allergies || []).length > 0
                 ? (patient.allergies || []).map((a, i) => (
-                    <span key={i} style={{ padding: '3px 12px', borderRadius: 999, backgroundColor: i === 0 ? '#EF4444' : '#F59E0B', color: 'white', fontSize: 12, fontWeight: 500 }}>{a}</span>
+                    <span key={i} className="px-3 py-0.5 rounded-full text-xs font-medium text-white" style={{ backgroundColor: i === 0 ? '#EF4444' : '#F59E0B' }}>{a}</span>
                   ))
-                : <span style={{ fontSize: 13, color: '#94A3B8' }}>None</span>
+                : <span className="text-sm text-[#94A3B8]">None</span>
               }
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-              <button style={{ padding: '10px 20px', backgroundColor: '#0D7377', color: 'white', border: 'none', borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: 'pointer' }}>New Appointment</button>
-              <button style={{ padding: '10px 20px', backgroundColor: 'white', color: '#1E293B', border: '1px solid #E2E8F0', borderRadius: 8, fontSize: 13, fontWeight: 500, cursor: 'pointer' }}>New Consultation</button>
-              <button style={{ padding: '10px 20px', backgroundColor: 'white', color: '#1E293B', border: '1px solid #E2E8F0', borderRadius: 8, fontSize: 13, fontWeight: 500, cursor: 'pointer' }}>New Invoice</button>
-              <span style={{ fontSize: 13, fontWeight: 600, color: '#1E293B', cursor: 'pointer' }}>Print Record</span>
+            <div className="flex flex-wrap gap-2.5 shrink-0">
+              <button className="px-5 py-2.5 bg-[#0D7377] text-white border-none rounded-lg text-sm font-semibold cursor-pointer">New Appointment</button>
+              <button className="px-5 py-2.5 bg-white text-[#1E293B] border border-[#E2E8F0] rounded-lg text-sm cursor-pointer">New Consultation</button>
+              <button className="px-5 py-2.5 bg-white text-[#1E293B] border border-[#E2E8F0] rounded-lg text-sm cursor-pointer">New Invoice</button>
+              <span className="text-sm font-semibold text-[#1E293B] cursor-pointer self-center">Print Record</span>
             </div>
           </div>
         </div>
 
         {/* Tabs + table */}
-        <div style={{ backgroundColor: 'white', borderRadius: 12, border: '1px solid #F1F5F9', boxShadow: '0 1px 3px rgba(0,0,0,0.06)', overflow: 'hidden' }}>
-          <div style={{ display: 'flex', borderBottom: '1px solid #E2E8F0', padding: '0 24px' }}>
-            {tabs.map(tab => (
-              <button key={tab} onClick={() => setActiveTab(tab.toLowerCase().replace(' ', ''))} style={{
-                padding: '16px 16px 14px', marginRight: 8,
-                background: 'none', border: 'none',
-                borderBottom: activeTab === tab.toLowerCase().replace(' ', '') ? '2px solid #0D7377' : '2px solid transparent',
-                fontSize: 14,
-                fontWeight: activeTab === tab.toLowerCase().replace(' ', '') ? 600 : 400,
-                color: activeTab === tab.toLowerCase().replace(' ', '') ? '#0D7377' : '#475569',
-                cursor: 'pointer', whiteSpace: 'nowrap',
-              }}>
-                {tab}
-              </button>
-            ))}
+        <div className="bg-white rounded-xl border border-[#F1F5F9] shadow-sm overflow-hidden">
+          {/* Tab bar — scrollable on mobile */}
+          <div className="overflow-x-auto border-b border-[#E2E8F0] px-5">
+            <div className="flex min-w-max">
+              {tabs.map(tab => {
+                const tabKey = tab.toLowerCase().replace(' ', '')
+                const active = activeTab === tabKey
+                return (
+                  <button
+                    key={tab}
+                    onClick={() => setActiveTab(tabKey)}
+                    className={[
+                      'py-4 px-4 text-sm whitespace-nowrap border-b-2 transition-colors cursor-pointer',
+                      active ? 'border-[#0D7377] text-[#0D7377] font-semibold' : 'border-transparent text-[#475569] font-normal hover:text-[#1E293B]',
+                    ].join(' ')}
+                  >
+                    {tab}
+                  </button>
+                )
+              })}
+            </div>
           </div>
 
           {activeTab === 'overview' && (
-            <div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 80px', backgroundColor: '#0D7377', padding: '14px 24px' }}>
+            <div className="overflow-x-auto">
+              <div className="grid grid-cols-[1fr_1fr_1fr_70px] min-w-[600px] bg-[#0D7377] py-3.5 px-5">
                 {['Date', 'Attending Doctor', 'Complaint', ''].map((h, i) => (
-                  <span key={i} style={{ fontSize: 13, fontWeight: 600, color: 'white' }}>{h}</span>
+                  <span key={i} className="text-sm font-semibold text-white truncate">{h}</span>
                 ))}
               </div>
               {visits.length === 0 && (
-                <div style={{ padding: '48px 24px', textAlign: 'center', color: '#94A3B8', fontSize: 14 }}>
+                <div className="py-12 px-5 text-center text-sm text-[#94A3B8]">
                   No visit records yet.
                 </div>
               )}
               {visits.map((v, i) => (
-                <div key={i} style={{
-                  display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 80px',
-                  padding: '16px 24px',
-                  backgroundColor: i % 2 === 0 ? 'white' : '#F0FAF9',
-                  borderBottom: i === visits.length - 1 ? 'none' : '1px solid #F1F5F9',
-                  alignItems: 'center',
-                }}>
-                  <span style={{ fontSize: 14, color: '#1E293B' }}>{new Date(v.date).toLocaleDateString('en-GB')}</span>
-                  <span style={{ fontSize: 14, color: '#1E293B' }}>{v.doctorName}</span>
-                  <span style={{ fontSize: 14, color: '#1E293B' }}>{v.complaint}</span>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, cursor: 'pointer' }}>
-                    <span style={{ fontSize: 13, fontWeight: 600, color: '#0D7377' }}>View</span>
+                <div key={i} className={[
+                  'grid grid-cols-[1fr_1fr_1fr_70px] min-w-[600px]',
+                  'py-4 px-5 items-center',
+                  i % 2 === 0 ? 'bg-white' : 'bg-[#F0FAF9]',
+                  i === visits.length - 1 ? '' : 'border-b border-[#F1F5F9]',
+                ].join(' ')}>
+                  <span className="text-sm text-[#1E293B] truncate">{new Date(v.date).toLocaleDateString('en-GB')}</span>
+                  <span className="text-sm text-[#1E293B] truncate pr-2">{v.doctorName}</span>
+                  <span className="text-sm text-[#1E293B] truncate pr-2">{v.complaint}</span>
+                  <div className="flex items-center gap-1.5 cursor-pointer">
+                    <span className="text-sm font-semibold text-[#0D7377]">View</span>
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#0D7377" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" /><circle cx="12" cy="12" r="3" />
                     </svg>
@@ -132,12 +142,13 @@ export default function PatientProfilePage() {
           )}
 
           {activeTab !== 'overview' && (
-            <div style={{ padding: '48px 24px', textAlign: 'center', color: '#94A3B8', fontSize: 14 }}>
+            <div className="py-12 px-5 text-center text-sm text-[#94A3B8]">
               No {tabs.find(t => t.toLowerCase().replace(' ', '') === activeTab)} records yet.
             </div>
           )}
         </div>
-      </div>
+
+      </main>
     </>
   )
 }

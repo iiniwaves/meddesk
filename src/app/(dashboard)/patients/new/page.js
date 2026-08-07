@@ -34,7 +34,7 @@ export default function NewPatientPage() {
 
   function getField(label) {
     return (
-      <label style={{ display: 'block', fontSize: 14, fontWeight: 500, color: '#374151', marginBottom: 6 }}>
+      <label className="block text-sm font-medium text-[#374151] mb-1.5">
         {label}
       </label>
     )
@@ -136,22 +136,22 @@ export default function NewPatientPage() {
     <>
       <TopBar title="Patients" onBack={() => router.back()} />
 
-      <div style={{ padding: '32px 40px', flex: 1 }}>
+      <main className="p-4 md:p-10 flex-1">
 
         {/* Title */}
-        <h1 style={{ margin: '0 0 32px', fontSize: 24, fontWeight: 700, color: '#111827' }}>Add New Patient</h1>
+        <h1 className="m-0 mb-8 text-2xl font-bold text-[#111827]">Add New Patient</h1>
 
         <form onSubmit={handleSubmit}>
-          <div style={{ maxWidth: 640 }}>
+          <div className="w-full max-w-[640px]">
             {/* Patient Name */}
-            <div style={{ marginBottom: 24 }}>
+            <div className="mb-6">
               {getField('Patient Name')}
               <input type="text" placeholder="type name here" style={inputStyle(false)} value={formData.patientName}
                 onChange={e => setFormData({ ...formData, patientName: e.target.value })} />
             </div>
 
             {/* Doctor */}
-            <div style={{ marginBottom: 24 }}>
+            <div className="mb-6">
               {getField('Doctor')}
               <select value={formData.doctor}
                 onChange={e => setFormData({ ...formData, doctor: e.target.value })}
@@ -161,14 +161,14 @@ export default function NewPatientPage() {
             </div>
 
             {/* Schedule Date & Time */}
-            <div style={{ display: 'flex', gap: 20, marginBottom: 24 }}>
-              <div style={{ flex: 1 }}>
+            <div className="mb-6 flex flex-col sm:flex-row gap-5">
+              <div className="flex-1">
                 {getField('Schedule Date')}
                 <input type="date" style={inputStyle()}
                   value={formData.scheduleDate}
                   onChange={e => setFormData({ ...formData, scheduleDate: e.target.value })} />
               </div>
-              <div style={{ flex: 1 }}>
+              <div className="flex-1">
                 {getField('Time')}
                 <select value={formData.time}
                   onChange={e => setFormData({ ...formData, time: e.target.value })}
@@ -179,7 +179,7 @@ export default function NewPatientPage() {
             </div>
 
             {/* Visit Type */}
-            <div style={{ marginBottom: 24 }}>
+            <div className="mb-6">
               {getField('Visit Type')}
               <select value={formData.visitType}
                 onChange={e => setFormData({ ...formData, visitType: e.target.value })}
@@ -189,7 +189,7 @@ export default function NewPatientPage() {
             </div>
 
             {/* Reason For Visit */}
-            <div style={{ marginBottom: 32 }}>
+            <div className="mb-8">
               {getField('Reason For Visit')}
               <textarea rows={4} placeholder="Complaints here..."
                 style={{ ...inputStyle(), padding: '14px', resize: 'vertical', fontFamily: 'inherit' }}
@@ -198,7 +198,7 @@ export default function NewPatientPage() {
             </div>
 
             {/* Error message */}
-            {error && <p style={{ color: '#EF4444', fontSize: 13, marginBottom: 16 }}>{error}</p>}
+            {error && <p className="text-sm text-[#EF4444] mb-4">{error}</p>}
 
             {/* Save Button */}
             <button type="submit" disabled={loading}
@@ -217,7 +217,8 @@ export default function NewPatientPage() {
             </button>
           </div>
         </form>
-      </div>
+
+      </main>
     </>
   )
 }
